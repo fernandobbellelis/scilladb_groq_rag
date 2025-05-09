@@ -3,15 +3,14 @@ Router for chat interactions. Orchestrates calls to the chat service.
 """
 from sanic.response import json
 from sanic import Blueprint, Request, HTTPResponse
-from groq import GroqError # For catching specific errors from the service
+from groq import GroqError 
 
-# Import functions from our core utilities/service
 from core.utils import (
     get_groq_chat_response,
     add_turn_to_history,
     get_current_conversation_history,
     reset_conversation_history,
-    GroqNotConfiguredError # Custom error for configuration issues
+    GroqNotConfiguredError 
 )
 
 chat_bp = Blueprint("chat_routes", url_prefix="/chat")
@@ -32,21 +31,18 @@ async def handle_chat_message(request: Request) -> HTTPResponse:
         current_history = get_current_conversation_history()
         assistant_reply = get_groq_chat_response(user_message, current_history)
 
-        # If successful, add the turn to the persistent history
         add_turn_to_history(user_message, assistant_reply)
 
         return json({"reply": assistant_reply})
 
     except GroqNotConfiguredError as e:
-        # This error means the server itself is not configured properly
         print(f"Chat Endpoint Error: {e}")
-        return json({"error": str(e)}, status=503) # Service Unavailable
+        return json({"error": str(e)}, status=503) 
     except GroqError as e:
-        # This error comes from the Groq API itself (e.g., rate limits, model issues)
+
         print(f"Chat Endpoint Groq API Error: {e}")
-        return json({"error": f"LLM API error: {str(e)}"}, status=502) # Bad Gateway
+        return json({"error": f"LLM API error: {str(e)}"}, status=502) 
     except Exception as e:
-        # Catch-all for other unexpected errors
         print(f"An unexpected error occurred in chat endpoint: {e}")
         return json({"error": "An internal server error occurred."}, status=500)
 

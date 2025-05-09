@@ -5,11 +5,8 @@ import os
 from typing import List, Dict, Tuple, Optional
 from groq import Groq, GroqError
 
-# --- Configuration ---
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama3-8b-8192") # Default model if not set in env
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama3-8b-8192") 
 
-# --- Initialize Groq Client ---
-# This will be a module-level client, initialized once when the module is imported.
 groq_api_key = os.environ.get("GROQ_API_KEY")
 groq_client: Optional[Groq] = None
 if groq_api_key:
@@ -17,12 +14,9 @@ if groq_api_key:
 else:
     print("ERROR: core.utils - GROQ_API_KEY environment variable not set. Chat functionality will be disabled.")
 
-# --- In-memory conversation history (module-level) ---
-# IMPORTANT: Still a simple in-memory store, global to the server process.
-# Resets on server restart. Not suitable for multi-user production without external storage.
 _system_prompt = {"role": "system", "content": "You are a helpful and concise chatbot."}
 _conversation_history: List[Dict[str, str]] = [_system_prompt]
-_MAX_HISTORY_ITEMS = 21 # 1 system + 10 user + 10 assistant turns
+_MAX_HISTORY_ITEMS = 21 
 
 
 class ChatServiceError(Exception):
@@ -62,12 +56,12 @@ def get_groq_chat_response(user_message: str, current_history: List[Dict[str, st
             max_tokens=1024,
         )
         assistant_response = chat_completion.choices[0].message.content
-        if assistant_response is None: # Should not happen with valid API usage
+        if assistant_response is None: 
             raise GroqError("Groq API returned an empty response content.")
         return assistant_response
     except GroqError as e:
         print(f"Groq API Error in core.utils: {e}")
-        raise # Re-raise the original GroqError to be handled by the caller
+        raise 
 
 
 def add_turn_to_history(user_message: str, assistant_message: str):
@@ -76,15 +70,13 @@ def add_turn_to_history(user_message: str, assistant_message: str):
     _conversation_history.append({"role": "user", "content": user_message})
     _conversation_history.append({"role": "assistant", "content": assistant_message})
 
-    # Limit history size
     if len(_conversation_history) > _MAX_HISTORY_ITEMS:
-        # Keep the system prompt and the latest messages
         _conversation_history[:] = [_conversation_history[0]] + _conversation_history[-_MAX_HISTORY_ITEMS+1:]
 
 
 def get_current_conversation_history() -> List[Dict[str, str]]:
     """Returns a copy of the current conversation history."""
-    return list(_conversation_history) # Return a copy
+    return list(_conversation_history) 
 
 
 def reset_conversation_history():
@@ -93,5 +85,3 @@ def reset_conversation_history():
     _conversation_history[:] = [_system_prompt]
     print("Conversation history reset in core.utils")
 
-# Initialize history when module is loaded (optional, good for ensuring it starts fresh)
-# reset_conversation_history() # Or just rely on the initial declaration
