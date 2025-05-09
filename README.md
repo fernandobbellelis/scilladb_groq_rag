@@ -4,7 +4,7 @@
 
 This project is dedicated to addressing and overcoming the challenges I faced with a specific client who complained about the response time of a Retrieval-Augmented Generation (RAG) chatbot one year ago. At that time, I was at a loss on how to optimize the RAG chatbot for faster response times. However, with advancements in technology and newfound knowledge, I am now equipped to tackle the root cause of those issues.
 
-This project is a culmination of my determination to solve the problem by leveraging modern technologies. It integrates embeddings generated using ModernBert, stored and retrieved efficiently with ScillaDB, and utilizes Groq as the LLM (Language Learning Model) provider.
+This project is a culmination of my determination to solve the problem by leveraging modern technologies. It integrates embeddings generated using ModernBert, stored and retrieved efficiently with ScillaDB, and utilizes Groq as the LLM (Language Learning Model) provider, and lastly the API framework is Sanic.
 
 ## Key Components
 
@@ -12,6 +12,7 @@ This project is a culmination of my determination to solve the problem by levera
 2. **ModernBert for Embeddings**: Utilizes the ModernBert model to generate high-quality embeddings for input text.
 3. **ScillaDB for Storage and Retrieval**: Efficiently stores and retrieves embeddings using ScillaDB, ensuring low-latency access.
 4. **Groq as LLM Provider**: Employs Groq for the language learning model, enhancing the chatbot's generative capabilities.
+5. **Sanic as the API framework**: Uses Sanic as the api framework, simply because it has the best time response through all of the python frameworks.
 
 ## Features
 
