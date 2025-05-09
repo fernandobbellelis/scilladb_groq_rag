@@ -1,24 +1,24 @@
 """
 Main application file to initialize and run the Sanic server.
 """
+import os
 from sanic import Sanic
+from dotenv import load_dotenv 
 
-# Import blueprints from the routers directory
+load_dotenv() 
+
 from routers.hello_router import hello_bp
-# If you add more routers, import their blueprints here:
-# from routers.another_router import another_bp
+from routers.chat_router import chat_bp
 
-# 1. Initialize the Sanic application
-app = Sanic("MyStructuredApp")
+app = Sanic("MyRefactoredAppWithChat")
 
-# 2. Register the blueprints with the application
-# All routes defined in 'hello_bp' will now be active.
 app.blueprint(hello_bp)
-# If you add more blueprints:
-# app.blueprint(another_bp)
+app.blueprint(chat_bp)
 
-# 3. Run the application
 if __name__ == "__main__":
+
+    if not os.environ.get("GROQ_API_KEY"):
+        print("WARNING (main.py): GROQ_API_KEY environment variable is not set. "
+              "Chat functionality will be disabled as per core.utils.")
+
     app.run(host="0.0.0.0", port=8000, debug=True, auto_reload=True)
-    # debug=True enables detailed error pages and auto-reloading on code changes.
-    # auto_reload=True explicitly enables auto-reloading (often implied by debug=True).
